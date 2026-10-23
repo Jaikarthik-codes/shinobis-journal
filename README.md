@@ -2,6 +2,8 @@
 
 > *"Every mission leaves a lesson. Every failure sharpens the shinobi."*
 
+**Live App**: [https://jaikarthik-codes.github.io/shinobis-journal/](https://jaikarthik-codes.github.io/shinobis-journal/)
+
 **Shinobi's Journal** is a minimalist, zero-friction, single-file web application designed to track daily learning, master new skills, and write structured Markdown logs directly into a private **Obsidian vault** using GitHub's REST API.
 
 Hosted for free on **GitHub Pages**, it requires no backend servers, no build steps, and no frameworks. Everything runs locally in your browser.
