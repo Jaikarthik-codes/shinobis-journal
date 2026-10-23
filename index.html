@@ -1,0 +1,2352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shinobi's Journal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,800..900&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --blue: #0047AB;
+      --orange: #E8612C;
+      --navy: #0B1B3A;
+      --crimson: #A3182A;
+      --cream: #F4E8CF;
+      --input-bg: #FFFDF2;
+      --page-bg: #F7F2EE;
+      --green: #22C55E;
+      --status-orange: #F97316;
+      --status-red: #DC2626;
+
+      --border-cream: #DFCFAD;
+      --border-cream-dark: #CEBDA0;
+      --card-radius: 16px;
+      --shadow-card: 0 4px 16px rgba(11, 27, 58, 0.05);
+      --shadow-popover: 0 16px 36px rgba(11, 27, 58, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      background-color: var(--page-bg);
+      color: var(--navy);
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      line-height: 1.5;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      min-height: 100vh;
+    }
+
+    /* ARCHIVO VARIABLE FONT */
+    .font-archivo,
+    .site-title,
+    .stat-number,
+    .note-title,
+    .chakra-title,
+    .popover-title,
+    .modal-title,
+    .btn-push {
+      font-family: 'Archivo', sans-serif;
+      font-stretch: 125%;
+      font-variation-settings: 'wdth' 125, 'wght' 850;
+      font-weight: 850;
+    }
+
+    /* HEADER */
+    .site-header {
+      background-color: var(--blue);
+      border-bottom: 7px solid var(--orange);
+      padding: 24px 20px 22px;
+      width: 100%;
+      position: relative;
+    }
+
+    .header-inner {
+      max-width: 880px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      position: relative;
+      gap: 16px;
+    }
+
+    .header-text {
+      flex: 1;
+    }
+
+    .site-title {
+      font-size: 38px;
+      color: #FFFFFF;
+      line-height: 1.1;
+      letter-spacing: -0.5px;
+      margin-bottom: 6px;
+    }
+
+    .site-tagline {
+      font-size: 14px;
+      color: #F1F5F9;
+      font-weight: 400;
+      opacity: 0.95;
+    }
+
+    .header-status-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background-color: #003685;
+      color: #FFFFFF;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 8px 18px;
+      border-radius: 9999px;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      user-select: none;
+      margin-top: 2px;
+    }
+
+    .header-status-pill:hover {
+      background-color: #002D6E;
+      border-color: rgba(255, 255, 255, 0.45);
+    }
+
+    .status-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    .status-dot.green {
+      background-color: var(--green);
+      box-shadow: 0 0 0 2px rgba(34, 197, 94, 0.25);
+    }
+
+    .status-dot.orange {
+      background-color: var(--status-orange);
+      box-shadow: 0 0 0 2px rgba(249, 115, 22, 0.25);
+    }
+
+    .status-dot.red {
+      background-color: var(--status-red);
+      box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.25);
+    }
+
+    /* MAIN CONTAINER */
+    .app-main {
+      max-width: 880px;
+      margin: 0 auto;
+      padding: 24px 16px 64px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+      position: relative;
+    }
+
+    /* CARD BASE */
+    .card {
+      background-color: var(--cream);
+      border-radius: var(--card-radius);
+      box-shadow: var(--shadow-card);
+      border: 1px solid var(--border-cream);
+    }
+
+    /* STAT CARDS */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+    }
+
+    .stat-card {
+      background-color: var(--cream);
+      border-radius: var(--card-radius);
+      padding: 18px 18px 16px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border: 1px solid var(--border-cream);
+      border-top: 5px solid var(--navy);
+      box-shadow: var(--shadow-card);
+      min-height: 145px;
+    }
+
+    .stat-card.orange-top { border-top-color: var(--orange); }
+    .stat-card.blue-top { border-top-color: var(--blue); }
+    .stat-card.navy-top { border-top-color: var(--navy); }
+
+    .stat-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-bottom: 6px;
+    }
+
+    .stat-value-group {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+      margin: 2px 0 6px;
+      flex-wrap: wrap;
+    }
+
+    .stat-number {
+      font-size: 38px;
+      line-height: 1;
+      color: var(--navy);
+    }
+
+    .stat-unit {
+      font-size: 13.5px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .stat-caption {
+      font-size: 11px;
+      color: #635848;
+      line-height: 1.35;
+      margin-top: 4px;
+    }
+
+    .week-circles {
+      display: flex;
+      gap: 5px;
+      margin: 6px 0 8px;
+    }
+
+    .week-circle {
+      width: 23px;
+      height: 23px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10.5px;
+      font-weight: 800;
+      user-select: none;
+    }
+
+    .week-circle.filled {
+      background-color: var(--navy);
+      color: #FFFDF2;
+      border: 1.5px solid var(--navy);
+    }
+
+    .week-circle.dashed {
+      background-color: transparent;
+      color: var(--navy);
+      border: 1.5px dashed var(--navy);
+    }
+
+    /* DATE BAR */
+    .date-bar {
+      padding: 12px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .date-label {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+    }
+
+    .date-input {
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--border-cream-dark);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--navy);
+      outline: none;
+      cursor: pointer;
+    }
+
+    .date-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(0, 71, 171, 0.15);
+    }
+
+    /* PILL BUTTONS */
+    .pill-btn {
+      border-radius: 9999px;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 6px 16px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      user-select: none;
+      border: none;
+    }
+
+    .pill-btn.outline {
+      background-color: transparent;
+      border: 1.5px solid var(--navy);
+      color: var(--navy);
+    }
+
+    .pill-btn.outline:hover:not(:disabled) {
+      background-color: rgba(11, 27, 58, 0.06);
+    }
+
+    .pill-btn.outline:disabled {
+      opacity: 0.35;
+      cursor: not-allowed;
+    }
+
+    .pill-btn.orange {
+      background-color: var(--orange);
+      border: 1.5px solid var(--orange);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .pill-btn.orange:hover:not(:disabled) {
+      background-color: #D3501D;
+      border-color: #D3501D;
+    }
+
+    .pill-btn.blue {
+      background-color: var(--blue);
+      border: 1.5px solid var(--blue);
+      color: #FFFFFF;
+      font-weight: 700;
+    }
+
+    .pill-btn.blue:hover:not(:disabled) {
+      background-color: #00388A;
+      border-color: #00388A;
+    }
+
+    /* NOTE CARDS */
+    .notes-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+
+    .note-card {
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      border-top: 5px solid var(--blue);
+    }
+
+    .note-card.endeavors { border-top-color: var(--blue); }
+    .note-card.takeaways { border-top-color: var(--orange); }
+    .note-card.bottlenecks { border-top-color: var(--crimson); }
+
+    .note-title {
+      font-size: 18px;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .note-card.endeavors .note-title { color: var(--blue); }
+    .note-card.takeaways .note-title { color: var(--orange); }
+    .note-card.bottlenecks .note-title { color: var(--crimson); }
+
+    .note-subtitle {
+      font-size: 12px;
+      color: var(--navy);
+      margin-bottom: 12px;
+      min-height: 32px;
+      line-height: 1.35;
+    }
+
+    .note-textarea {
+      width: 100%;
+      background-color: var(--input-bg);
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--navy);
+      line-height: 1.5;
+      resize: vertical;
+      min-height: 220px;
+      outline: none;
+      transition: box-shadow 0.15s ease, border-color 0.15s ease;
+    }
+
+    .note-card.endeavors .note-textarea { border: 2px solid var(--blue); }
+    .note-card.takeaways .note-textarea { border: 2px solid var(--orange); }
+    .note-card.bottlenecks .note-textarea { border: 2px solid var(--crimson); }
+
+    .note-textarea:focus {
+      box-shadow: 0 0 0 3px rgba(0, 71, 171, 0.15);
+    }
+
+    .note-textarea::placeholder {
+      color: #9C8F79;
+      font-style: normal;
+    }
+
+    /* CHAKRA NATURE */
+    .chakra-card {
+      padding: 20px 22px;
+    }
+
+    .chakra-title {
+      font-size: 20px;
+      color: var(--blue);
+      letter-spacing: 0.5px;
+      margin-bottom: 14px;
+    }
+
+    .chakra-input-row {
+      display: flex;
+      gap: 12px;
+    }
+
+    .chakra-input {
+      flex: 1;
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--border-cream-dark);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      outline: none;
+    }
+
+    .chakra-input:focus {
+      border-color: var(--blue);
+      box-shadow: 0 0 0 2px rgba(0, 71, 171, 0.15);
+    }
+
+    .chakra-input::placeholder {
+      color: #9C8F79;
+    }
+
+    .chakra-helper {
+      font-size: 11.5px;
+      color: #635848;
+      margin-top: 10px;
+      line-height: 1.4;
+    }
+
+    .chakra-skills-label {
+      font-size: 11px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--navy);
+      margin-top: 18px;
+      margin-bottom: 8px;
+    }
+
+    .skills-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      min-height: 36px;
+    }
+
+    .skill-chip {
+      border-radius: 9999px;
+      padding: 6px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+    }
+
+    .skill-chip.selected {
+      background-color: var(--blue);
+      color: #FFFFFF;
+      border: 1.5px solid var(--blue);
+    }
+
+    .skill-chip.unselected {
+      background-color: transparent;
+      color: var(--navy);
+      border: 1.5px solid var(--navy);
+    }
+
+    .skill-chip.unselected:hover {
+      background-color: rgba(11, 27, 58, 0.06);
+    }
+
+    /* ACTION BUTTONS */
+    .actions-row {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 12px;
+      margin-top: 10px;
+      margin-bottom: 24px;
+    }
+
+    .btn-preview {
+      width: 360px;
+      max-width: 100%;
+      background-color: transparent;
+      border: 1.5px solid var(--blue);
+      color: var(--blue);
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 700;
+      padding: 12px 24px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .btn-preview:hover {
+      background-color: rgba(0, 71, 171, 0.06);
+    }
+
+    .btn-push {
+      width: 440px;
+      max-width: 100%;
+      background-color: var(--blue);
+      border: none;
+      color: #FFFFFF;
+      font-size: 16px;
+      letter-spacing: 0.8px;
+      padding: 16px 28px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      box-shadow: 0 4px 14px rgba(0, 71, 171, 0.25);
+    }
+
+    .btn-push:hover:not(:disabled) {
+      background-color: #00388A;
+      box-shadow: 0 6px 18px rgba(0, 71, 171, 0.35);
+    }
+
+    .btn-push:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    /* GITHUB SETUP POPOVER */
+    .popover-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 998;
+      background: transparent;
+      display: none;
+    }
+
+    .popover-backdrop.active {
+      display: block;
+    }
+
+    .github-popover {
+      position: absolute;
+      top: 58px;
+      right: 0;
+      width: 360px;
+      max-width: calc(100vw - 32px);
+      background-color: var(--cream);
+      border: 1px solid var(--border-cream-dark);
+      border-radius: var(--card-radius);
+      padding: 20px 22px;
+      box-shadow: var(--shadow-popover);
+      z-index: 999;
+      display: none;
+    }
+
+    .github-popover.active {
+      display: block;
+      animation: popover-appear 0.18s ease-out;
+    }
+
+    @keyframes popover-appear {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .popover-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .popover-title {
+      font-size: 18px;
+      color: var(--blue);
+      letter-spacing: 0.5px;
+    }
+
+    .popover-close-btn {
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      border: 1px solid var(--border-cream-dark);
+      background: var(--input-bg);
+      color: var(--navy);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1;
+    }
+
+    .popover-close-btn:hover {
+      background-color: #EFE4CC;
+    }
+
+    .popover-status-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+
+    .field-group {
+      margin-bottom: 11px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--navy);
+      margin-bottom: 4px;
+    }
+
+    .popover-input {
+      width: 100%;
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--border-cream-dark);
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-family: 'Inter', sans-serif;
+      font-size: 13.5px;
+      color: var(--navy);
+      outline: none;
+    }
+
+    .popover-input:focus {
+      border-color: var(--blue);
+    }
+
+    .popover-input::placeholder {
+      color: #A39680;
+    }
+
+    .popover-help-text {
+      font-size: 11px;
+      color: #635848;
+      line-height: 1.35;
+      margin-top: 6px;
+      margin-bottom: 14px;
+    }
+
+    .popover-btn-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .popover-btn-row .pill-btn {
+      flex: 1;
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .btn-disconnect {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      border: 1.5px solid var(--crimson);
+      background: transparent;
+      color: var(--crimson);
+      font-size: 12.5px;
+      font-weight: 700;
+      padding: 6px 18px;
+      border-radius: 9999px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      margin-top: 2px;
+    }
+
+    .btn-disconnect:hover {
+      background-color: rgba(163, 24, 42, 0.08);
+    }
+
+    .popover-divider {
+      border: none;
+      border-top: 1px solid var(--border-cream);
+      margin: 16px 0 12px;
+    }
+
+    .popover-legend {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      font-size: 11px;
+      color: var(--navy);
+      line-height: 1.35;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+    }
+
+    .legend-item .status-dot {
+      margin-top: 3.5px;
+    }
+
+    /* MODAL */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(11, 27, 58, 0.65);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      padding: 16px;
+      backdrop-filter: blur(2px);
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background-color: var(--cream);
+      border-radius: var(--card-radius);
+      padding: 22px;
+      width: 100%;
+      max-width: 680px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 16px 36px rgba(11, 27, 58, 0.35);
+      border: 1px solid var(--border-cream-dark);
+    }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .modal-title-group {
+      display: flex;
+      align-items: baseline;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .modal-title {
+      font-size: 20px;
+      color: var(--blue);
+    }
+
+    .modal-filepath {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 12px;
+      background: #E8D9BD;
+      padding: 3px 8px;
+      border-radius: 6px;
+      color: var(--navy);
+    }
+
+    .modal-pre {
+      background-color: var(--input-bg);
+      border: 1.5px solid var(--border-cream-dark);
+      border-radius: 10px;
+      padding: 16px;
+      overflow: auto;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 13px;
+      line-height: 1.5;
+      color: var(--navy);
+      margin: 0 0 16px 0;
+      flex: 1;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .modal-footer {
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* TOASTS */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      z-index: 9999;
+      pointer-events: none;
+      align-items: center;
+    }
+
+    .toast {
+      background-color: var(--navy);
+      color: #FFFDF2;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 22px;
+      border-radius: 9999px;
+      box-shadow: 0 6px 18px rgba(11, 27, 58, 0.35);
+      animation: toast-fade-in 0.2s ease-out forwards;
+      pointer-events: auto;
+      max-width: 90vw;
+      text-align: center;
+    }
+
+    .toast.toast-error {
+      background-color: var(--crimson);
+    }
+
+    @keyframes toast-fade-in {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .header-status-pill {
+        align-self: flex-start;
+      }
+
+      .github-popover {
+        right: auto;
+        left: 0;
+        top: 105px;
+      }
+
+      .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .notes-row {
+        grid-template-columns: 1fr;
+      }
+
+      .btn-preview, .btn-push {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .stats-row {
+        grid-template-columns: 1fr;
+      }
+
+      .site-title {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <header class="site-header">
+    <div class="header-inner">
+      <div class="header-text">
+        <h1 class="site-title">Shinobi's Journal</h1>
+        <p class="site-tagline">Every mission leaves a lesson. Every failure sharpens the shinobi.</p>
+      </div>
+
+      <button type="button" id="header-status-btn" class="header-status-pill" aria-label="GitHub status">
+        <span id="header-status-dot" class="status-dot red"></span>
+        <span id="header-status-text">GitHub: Not connected</span>
+      </button>
+
+      <!-- GITHUB SETUP POPOVER -->
+      <div id="github-popover" class="github-popover" role="dialog" aria-labelledby="popover-title">
+        <div class="popover-header">
+          <h2 id="popover-title" class="popover-title">GITHUB SETUP</h2>
+          <button type="button" id="popover-close-btn" class="popover-close-btn" aria-label="Close setup">&times;</button>
+        </div>
+
+        <div class="popover-status-row">
+          <span id="popover-status-dot" class="status-dot red"></span>
+          <span id="popover-status-text">Not connected</span>
+        </div>
+
+        <form id="gh-setup-form" onsubmit="return false;">
+          <div class="field-group">
+            <label class="field-label" for="gh-username">GitHub username</label>
+            <input type="text" id="gh-username" class="popover-input" placeholder="your-username" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="gh-repo">Vault repository</label>
+            <input type="text" id="gh-repo" class="popover-input" placeholder="learning-vault" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="gh-branch">Branch</label>
+            <input type="text" id="gh-branch" class="popover-input" placeholder="main" value="main" autocomplete="off" spellcheck="false">
+          </div>
+
+          <div class="field-group">
+            <label class="field-label" for="gh-token">Access token</label>
+            <input type="password" id="gh-token" class="popover-input" placeholder="github_pat_..." autocomplete="off">
+          </div>
+
+          <p class="popover-help-text">
+            Use a fine-grained token limited to this one repository, with Contents read and write. It is stored only in this browser.
+          </p>
+
+          <div class="popover-btn-row">
+            <button type="button" id="btn-test-connection" class="pill-btn blue">Test connection</button>
+            <button type="button" id="btn-save-settings" class="pill-btn orange">Save</button>
+          </div>
+
+          <button type="button" id="btn-disconnect" class="btn-disconnect">Disconnect</button>
+        </form>
+
+        <hr class="popover-divider">
+
+        <div class="popover-legend">
+          <div class="legend-item">
+            <span class="status-dot green"></span>
+            <span><strong>Green: connected.</strong> Token works, repo reachable.</span>
+          </div>
+          <div class="legend-item">
+            <span class="status-dot orange"></span>
+            <span><strong>Orange: error.</strong> Expired token, wrong repo, or no write access.</span>
+          </div>
+          <div class="legend-item">
+            <span class="status-dot red"></span>
+            <span><strong>Red: not connected.</strong> No token saved yet.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <div id="popover-backdrop" class="popover-backdrop"></div>
+
+  <!-- MAIN APP CONTAINER -->
+  <main class="app-main">
+
+    <!-- 1. STAT CARDS -->
+    <section class="stats-row" aria-label="Training statistics">
+      <!-- CURRENT STREAK -->
+      <div class="stat-card orange-top">
+        <div class="stat-label">CURRENT STREAK</div>
+        <div class="stat-value-group">
+          <span id="stat-current-streak" class="stat-number">0</span>
+          <span class="stat-unit">days in a row</span>
+        </div>
+        <p class="stat-caption">One rest day a week never breaks it.</p>
+      </div>
+
+      <!-- LONGEST STREAK -->
+      <div class="stat-card blue-top">
+        <div class="stat-label">LONGEST STREAK</div>
+        <div class="stat-value-group">
+          <span id="stat-longest-streak" class="stat-number">0</span>
+          <span class="stat-unit">days</span>
+        </div>
+        <p class="stat-caption">Your record stays yours, even after a rest.</p>
+      </div>
+
+      <!-- TOTAL DAYS LOGGED -->
+      <div class="stat-card navy-top">
+        <div class="stat-label">TOTAL DAYS LOGGED</div>
+        <div class="stat-value-group">
+          <span id="stat-total-days" class="stat-number">0</span>
+          <span class="stat-unit">days</span>
+        </div>
+        <p class="stat-caption">Wins and losses both count. This number only goes up.</p>
+      </div>
+
+      <!-- WEEKLY ACTIVITY -->
+      <div class="stat-card blue-top">
+        <div class="stat-label">WEEKLY ACTIVITY</div>
+        <div class="stat-value-group">
+          <span id="stat-weekly-ratio" class="stat-number">0 / 7</span>
+          <span class="stat-unit">days logged</span>
+        </div>
+        <div id="week-circles" class="week-circles" aria-label="Activity over last seven days">
+          <!-- Populated by JS -->
+        </div>
+        <p class="stat-caption">Filled = logged, win or loss. Dashed = rest day.</p>
+      </div>
+    </section>
+
+    <!-- 2. DATE BAR -->
+    <section class="date-bar card" aria-label="Date selection">
+      <label for="date-input" class="date-label">Date</label>
+      <input type="date" id="date-input" class="date-input" lang="en-IN">
+      <button type="button" id="btn-prev-day" class="pill-btn outline">&lt; Previous day</button>
+      <button type="button" id="btn-today" class="pill-btn orange">Today</button>
+      <button type="button" id="btn-next-day" class="pill-btn outline">Next day &gt;</button>
+    </section>
+
+    <!-- 3. NOTE CARDS -->
+    <section class="notes-row" aria-label="Daily note entries">
+      <!-- ENDEAVORS -->
+      <div class="note-card endeavors card">
+        <h2 class="note-title">ENDEAVORS</h2>
+        <p class="note-subtitle">Training arc: what did you grind through today?</p>
+        <textarea id="note-endeavors" class="note-textarea" placeholder="Finished the joins chapter and rebuilt the exercises from memory." spellcheck="true"></textarea>
+      </div>
+
+      <!-- KEY TAKEAWAYS -->
+      <div class="note-card takeaways card">
+        <h2 class="note-title">KEY TAKEAWAYS</h2>
+        <p class="note-subtitle">New techniques unlocked today</p>
+        <textarea id="note-takeaways" class="note-textarea" placeholder="One thing you now understand, one per line." spellcheck="true"></textarea>
+      </div>
+
+      <!-- BOTTLENECKS -->
+      <div class="note-card bottlenecks card">
+        <h2 class="note-title">BOTTLENECKS</h2>
+        <p class="note-subtitle">Boss fight: what stayed unbeaten?</p>
+        <textarea id="note-bottlenecks" class="note-textarea" placeholder="Boss fight: what stayed unbeaten?" spellcheck="true"></textarea>
+      </div>
+    </section>
+
+    <!-- 4. CHAKRA NATURE -->
+    <section class="chakra-card card" aria-label="Chakra nature and skills">
+      <h2 class="chakra-title">CHAKRA NATURE</h2>
+      <div class="chakra-input-row">
+        <input type="text" id="skill-input" class="chakra-input" list="skills-datalist" placeholder="Name the skill you levelled up, e.g. SQL" autocomplete="off">
+        <datalist id="skills-datalist"></datalist>
+        <button type="button" id="btn-add-skill" class="pill-btn orange">Add</button>
+      </div>
+      <p class="chakra-helper">
+        Filled = worked on today. A brand-new skill gets its own folder in the vault; a skill you already know reuses its folder.
+      </p>
+
+      <div class="chakra-skills-label">YOUR SKILLS</div>
+      <div id="skills-chips" class="skills-chips">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- 5. ACTION BUTTONS -->
+    <div class="actions-row">
+      <button type="button" id="btn-preview-episode" class="btn-preview">Preview the episode</button>
+      <button type="button" id="btn-push-episode" class="btn-push">END EPISODE: PUSH TO GITHUB</button>
+    </div>
+
+  </main>
+
+  <!-- PREVIEW MODAL -->
+  <div id="preview-modal-backdrop" class="modal-backdrop">
+    <div class="modal-card" role="dialog" aria-labelledby="modal-preview-title">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <h2 id="modal-preview-title" class="modal-title">EPISODE PREVIEW</h2>
+          <span id="modal-preview-filepath" class="modal-filepath">Daily/YYYY-MM-DD.md</span>
+        </div>
+        <button type="button" id="modal-preview-close" class="popover-close-btn" aria-label="Close preview">&times;</button>
+      </div>
+      <pre id="modal-preview-content" class="modal-pre"></pre>
+      <div class="modal-footer">
+        <button type="button" id="modal-copy-btn" class="pill-btn outline">Copy Markdown</button>
+        <button type="button" id="modal-close-btn" class="pill-btn blue">Close</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATIONS -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- VANILLA JAVASCRIPT -->
+  <script>
+    /* =====================================================
+       PART 1: CONSTANTS & STORAGE KEYS
+       ===================================================== */
+    const DAILY_DIR = "Daily";
+    const SKILLS_DIR = "Skills";
+    const API = "https://api.github.com";
+
+    const STORAGE_KEY = "shinobi_settings";
+
+    /* =====================================================
+       PART 2: APPLICATION STATE
+       ===================================================== */
+    let isConnected = false;
+    let selectedDate = ""; // Local YYYY-MM-DD
+    let loggedDates = new Set(); // Set of "YYYY-MM-DD"
+    let knownSkills = []; // Canonical skill folder names
+    let selectedSkills = []; // Selected for currently displayed date
+    let newSkills = new Set(); // Skills typed during this session that need new folders
+    let initialSkillsForDate = []; // Skills that were in the note when loaded
+
+    // Track whether form has unsaved edits
+    let formSnapshot = "";
+
+    /* =====================================================
+       PART 3: DATE HELPERS (LOCAL ONLY - NO toISOString)
+       ===================================================== */
+
+    /**
+     * Returns a Date object set to local calendar today at 12:00:00 noon.
+     */
+    function getTodayLocal() {
+      const now = new Date();
+      return new Date(now.getFullYear(), now.getMonth(), now.getDate(), 12, 0, 0, 0);
+    }
+
+    /**
+     * Formats local Date to "YYYY-MM-DD" using local calendar getters.
+     * Never uses toISOString() to prevent UTC timezone shifts.
+     */
+    function formatLocalDate(d) {
+      const year = d.getFullYear();
+      const month = String(d.getMonth() + 1).padStart(2, '0');
+      const day = String(d.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    /**
+     * Parses "YYYY-MM-DD" into a local Date set to 12:00:00 noon to avoid DST edge cases.
+     */
+    function parseLocalDate(str) {
+      if (!str || typeof str !== 'string') return getTodayLocal();
+      const parts = str.split('-').map(Number);
+      if (parts.length !== 3 || isNaN(parts[0]) || isNaN(parts[1]) || isNaN(parts[2])) {
+        return getTodayLocal();
+      }
+      return new Date(parts[0], parts[1] - 1, parts[2], 12, 0, 0, 0);
+    }
+
+    /**
+     * Adds N days to a local Date at noon.
+     */
+    function addDays(d, n) {
+      const res = new Date(d.getFullYear(), d.getMonth(), d.getDate(), 12, 0, 0, 0);
+      res.setDate(res.getDate() + n);
+      return res;
+    }
+
+    /* =====================================================
+       PART 4: STATS & STREAK CALCULATIONS
+       ===================================================== */
+
+    /**
+     * walkStreak: A pure function that calculates streak walking backward day by day.
+     *
+     * Rules:
+     * - Start day is checked. If logged, adds 1 to the count.
+     * - A missed day adds nothing and is recorded.
+     * - If there is already a recorded miss less than 7 days after this one
+     *   (meaning two misses inside the same 7-day window, i.e. lastMiss - curr < 7 days),
+     *   stop the walk.
+     * - Also stop once the walk passes the earliest logged date.
+     * - Missed days never count as logs, and a single miss never resets the count.
+     *
+     * Unit Tests:
+     * -----------
+     * Case 1: Empty set
+     *   walkStreak(new Set(), new Date(2026, 9, 23)) === 0
+     *
+     * Case 2: Consecutive logs (3 days)
+     *   const set2 = new Set(['2026-10-21', '2026-10-22', '2026-10-23']);
+     *   walkStreak(set2, new Date(2026, 9, 23)) === 3
+     *
+     * Case 3: One gap (single rest day never breaks streak)
+     *   const set3 = new Set(['2026-10-20', '2026-10-21', '2026-10-23']); // 2026-10-22 missed
+     *   walkStreak(set3, new Date(2026, 9, 23)) === 3
+     *
+     * Case 4: Two gaps 3 days apart (stops on second gap inside 7 days)
+     *   const set4 = new Set(['2026-10-18', '2026-10-20', '2026-10-21', '2026-10-23']);
+     *   // gaps at 2026-10-22 and 2026-10-19: diff = 22 - 19 = 3 (< 7), stops at 19
+     *   walkStreak(set4, new Date(2026, 9, 23)) === 3 (Oct 23, 21, 20 counted)
+     *
+     * Case 5: Two gaps 8 days apart (continues across both separate rest days)
+     *   const set5 = new Set([
+     *     '2026-10-13', // gap on 2026-10-14
+     *     '2026-10-15', '2026-10-16', '2026-10-17', '2026-10-18', '2026-10-19', '2026-10-20', '2026-10-21',
+     *     // gap on 2026-10-22: diff = 22 - 14 = 8 (>= 7), continues
+     *     '2026-10-23'
+     *   ]);
+     *   walkStreak(set5, new Date(2026, 9, 23)) === 9 (1 + 7 + 1)
+     */
+    function walkStreak(loggedSet, startDate) {
+      if (!loggedSet || loggedSet.size === 0) return 0;
+
+      // Find earliest logged date
+      let earliestStr = null;
+      for (const d of loggedSet) {
+        if (!earliestStr || d < earliestStr) {
+          earliestStr = d;
+        }
+      }
+      if (!earliestStr) return 0;
+      const earliestDate = parseLocalDate(earliestStr);
+
+      let curr = (startDate instanceof Date)
+        ? new Date(startDate.getFullYear(), startDate.getMonth(), startDate.getDate(), 12, 0, 0, 0)
+        : parseLocalDate(startDate);
+
+      if (curr < earliestDate) return 0;
+
+      let count = 0;
+      let lastMissTime = null; // Timestamp of the closest miss encountered walking backward
+
+      while (curr >= earliestDate) {
+        const dateStr = formatLocalDate(curr);
+        if (loggedSet.has(dateStr)) {
+          count++;
+        } else {
+          // Missed day
+          if (lastMissTime !== null) {
+            const diffDays = Math.round((lastMissTime - curr.getTime()) / (1000 * 60 * 60 * 24));
+            if (diffDays < 7) {
+              // Two misses inside the same 7-day window -> stop the walk
+              break;
+            }
+          }
+          lastMissTime = curr.getTime();
+        }
+        curr = addDays(curr, -1);
+      }
+
+      return count;
+    }
+
+    /**
+     * Computes current streak: start from today if today is logged, otherwise yesterday.
+     */
+    function getCurrentStreak(loggedSet) {
+      if (!loggedSet || loggedSet.size === 0) return 0;
+      const today = getTodayLocal();
+      const todayStr = formatLocalDate(today);
+      const startDay = loggedSet.has(todayStr) ? today : addDays(today, -1);
+      return walkStreak(loggedSet, startDay);
+    }
+
+    /**
+     * Computes longest streak across all logged dates.
+     */
+    function getLongestStreak(loggedSet) {
+      if (!loggedSet || loggedSet.size === 0) return 0;
+      let max = getCurrentStreak(loggedSet);
+      for (const dateStr of loggedSet) {
+        const streak = walkStreak(loggedSet, parseLocalDate(dateStr));
+        if (streak > max) {
+          max = streak;
+        }
+      }
+      return max;
+    }
+
+    /**
+     * Computes weekly activity for the last 7 calendar days ending today.
+     */
+    function getWeeklyActivity(loggedSet) {
+      const today = getTodayLocal();
+      const days = [];
+      let loggedCount = 0;
+      const initials = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+
+      for (let i = 6; i >= 0; i--) {
+        const d = addDays(today, -i);
+        const dateStr = formatLocalDate(d);
+        const isLogged = loggedSet ? loggedSet.has(dateStr) : false;
+        if (isLogged) loggedCount++;
+        days.push({
+          dateStr,
+          dayInitial: initials[d.getDay()],
+          isLogged
+        });
+      }
+
+      return { count: loggedCount, days };
+    }
+
+    /**
+     * Updates all stat elements in the UI.
+     */
+    function updateStats() {
+      const current = getCurrentStreak(loggedDates);
+      const longest = getLongestStreak(loggedDates);
+      const total = loggedDates.size;
+      const weekly = getWeeklyActivity(loggedDates);
+
+      document.getElementById('stat-current-streak').textContent = current;
+      document.getElementById('stat-longest-streak').textContent = longest;
+      document.getElementById('stat-total-days').textContent = total;
+      document.getElementById('stat-weekly-ratio').textContent = `${weekly.count} / 7`;
+
+      // Render 7 week circles
+      const weekContainer = document.getElementById('week-circles');
+      weekContainer.innerHTML = '';
+      weekly.days.forEach(day => {
+        const circle = document.createElement('div');
+        circle.className = `week-circle ${day.isLogged ? 'filled' : 'dashed'}`;
+        circle.textContent = day.dayInitial;
+        circle.title = `${day.dateStr}: ${day.isLogged ? 'Logged' : 'Rest day'}`;
+        weekContainer.appendChild(circle);
+      });
+    }
+
+    /* =====================================================
+       PART 5: GITHUB CONFIGURATION & CONNECTION
+       ===================================================== */
+
+    function getSettings() {
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) return JSON.parse(raw);
+      } catch (_) {}
+      return { username: '', repo: '', branch: 'main', token: '' };
+    }
+
+    function saveSettings(settings) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    }
+
+    function clearSettings() {
+      localStorage.removeItem(STORAGE_KEY);
+    }
+
+    function updateConnectionStatus(state, message) {
+      const headerDot = document.getElementById('header-status-dot');
+      const headerText = document.getElementById('header-status-text');
+      const popoverDot = document.getElementById('popover-status-dot');
+      const popoverText = document.getElementById('popover-status-text');
+
+      headerDot.className = 'status-dot';
+      popoverDot.className = 'status-dot';
+
+      if (state === 'connected') {
+        isConnected = true;
+        headerDot.classList.add('green');
+        popoverDot.classList.add('green');
+        headerText.textContent = 'GitHub: Connected';
+        popoverText.textContent = 'Connected';
+      } else if (state === 'error') {
+        isConnected = false;
+        headerDot.classList.add('orange');
+        popoverDot.classList.add('orange');
+        headerText.textContent = 'GitHub: Error';
+        popoverText.textContent = message ? `Error. ${message}` : 'Error';
+      } else {
+        isConnected = false;
+        headerDot.classList.add('red');
+        popoverDot.classList.add('red');
+        headerText.textContent = 'GitHub: Not connected';
+        popoverText.textContent = 'Not connected. No token saved yet.';
+      }
+    }
+
+    /**
+     * GitHub API fetch helper.
+     * Uses Authorization: Bearer <token>, Accept: application/vnd.github+json, X-GitHub-Api-Version: 2022-11-28.
+     * The token is never logged or exposed.
+     */
+    async function ghFetch(endpoint, options = {}, customToken = null) {
+      const token = customToken || getSettings().token;
+      if (!token) {
+        const err = new Error("No token saved");
+        err.status = 401;
+        throw err;
+      }
+
+      const url = endpoint.startsWith('http') ? endpoint : `${API}${endpoint}`;
+      const headers = {
+        'Authorization': `Bearer ${token}`,
+        'Accept': 'application/vnd.github+json',
+        'X-GitHub-Api-Version': '2022-11-28',
+        ...(options.headers || {})
+      };
+
+      let response;
+      try {
+        response = await fetch(url, { ...options, headers });
+      } catch (networkErr) {
+        const err = new Error("Network error: failed to reach GitHub");
+        err.status = 0;
+        throw err;
+      }
+
+      if (response.status === 403) {
+        const remaining = response.headers.get('x-ratelimit-remaining');
+        if (remaining === '0') {
+          const resetTime = response.headers.get('x-ratelimit-reset');
+          const dateStr = resetTime ? ` Resets at ${new Date(resetTime * 1000).toLocaleTimeString()}.` : '';
+          const err = new Error(`GitHub API rate limit exceeded.${dateStr}`);
+          err.status = 403;
+          throw err;
+        }
+      }
+
+      if (!response.ok) {
+        let msg = `Request failed (${response.status})`;
+        try {
+          const errJson = await response.json();
+          if (errJson && errJson.message) msg = errJson.message;
+        } catch (_) {}
+        const err = new Error(msg);
+        err.status = response.status;
+        throw err;
+      }
+
+      if (response.status === 204) return null;
+      return await response.json();
+    }
+
+    /**
+     * Verifies connection by checking:
+     * 1. GET /repos/{owner}/{repo} succeeds and response.permissions.push is true
+     * 2. GET /repos/{owner}/{repo}/branches/{branch} succeeds
+     */
+    async function verifyConnection(showToastMessage = false, explicitCreds = null) {
+      const config = explicitCreds || getSettings();
+      if (!config.token || !config.username || !config.repo) {
+        updateConnectionStatus('not-connected');
+        return false;
+      }
+
+      const owner = encodeURIComponent(config.username.trim());
+      const repo = encodeURIComponent(config.repo.trim());
+      const branch = encodeURIComponent((config.branch || 'main').trim());
+
+      try {
+        // Step 1: Check repo & permissions
+        const repoRes = await fetch(`${API}/repos/${owner}/${repo}`, {
+          headers: {
+            'Authorization': `Bearer ${config.token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+
+        if (repoRes.status === 401) {
+          updateConnectionStatus('error', 'Expired or invalid token');
+          if (showToastMessage) showToast('Token expired or invalid', true);
+          return false;
+        }
+        if (repoRes.status === 404) {
+          updateConnectionStatus('error', 'Repository not found');
+          if (showToastMessage) showToast('Repository not found', true);
+          return false;
+        }
+        if (repoRes.status === 403) {
+          const remaining = repoRes.headers.get('x-ratelimit-remaining');
+          const reason = remaining === '0' ? 'API rate limit exceeded' : 'Token has no access / forbidden';
+          updateConnectionStatus('error', reason);
+          if (showToastMessage) showToast(reason, true);
+          return false;
+        }
+        if (!repoRes.ok) {
+          updateConnectionStatus('error', `Repo check failed (${repoRes.status})`);
+          if (showToastMessage) showToast(`Repo check failed (${repoRes.status})`, true);
+          return false;
+        }
+
+        const repoData = await repoRes.json();
+        if (!repoData.permissions || !repoData.permissions.push) {
+          updateConnectionStatus('error', 'Token has no write access');
+          if (showToastMessage) showToast('Token has no write access', true);
+          return false;
+        }
+
+        // Step 2: Check branch
+        const branchRes = await fetch(`${API}/repos/${owner}/${repo}/branches/${branch}`, {
+          headers: {
+            'Authorization': `Bearer ${config.token}`,
+            'Accept': 'application/vnd.github+json',
+            'X-GitHub-Api-Version': '2022-11-28'
+          }
+        });
+
+        if (branchRes.status === 404) {
+          updateConnectionStatus('error', 'Branch not found');
+          if (showToastMessage) showToast(`Branch "${config.branch || 'main'}" not found`, true);
+          return false;
+        }
+        if (!branchRes.ok) {
+          updateConnectionStatus('error', `Branch check failed (${branchRes.status})`);
+          if (showToastMessage) showToast(`Branch check failed (${branchRes.status})`, true);
+          return false;
+        }
+
+        updateConnectionStatus('connected');
+        if (showToastMessage) showToast('Connected to GitHub!');
+        return true;
+      } catch (err) {
+        updateConnectionStatus('error', 'Network failure');
+        if (showToastMessage) showToast('Network error: unable to reach GitHub', true);
+        return false;
+      }
+    }
+
+    /* =====================================================
+       PART 6: VAULT DATA FETCHING (HISTORY & SKILLS)
+       ===================================================== */
+
+    /**
+     * Fetches all daily note filenames in Daily/
+     */
+    async function loadDailyHistory() {
+      const config = getSettings();
+      if (!config.token || !config.username || !config.repo) return;
+
+      const owner = encodeURIComponent(config.username.trim());
+      const repo = encodeURIComponent(config.repo.trim());
+      const branch = encodeURIComponent((config.branch || 'main').trim());
+
+      loggedDates = new Set();
+
+      try {
+        const contents = await ghFetch(`/repos/${owner}/${repo}/contents/${DAILY_DIR}?ref=${branch}`);
+        if (Array.isArray(contents)) {
+          if (contents.length < 1000) {
+            contents.forEach(item => {
+              if (item.type === 'file' && /^\d{4}-\d{2}-\d{2}\.md$/.test(item.name)) {
+                loggedDates.add(item.name.replace('.md', ''));
+              }
+            });
+          } else {
+            // Fall back to recursive Git Trees API for >=1000 files
+            await loadDailyHistoryViaTree(owner, repo, branch);
+          }
+        }
+      } catch (err) {
+        if (err.status === 404) {
+          // Folder does not exist yet (no notes)
+          loggedDates = new Set();
+        } else {
+          console.error("Failed to fetch daily history:", err);
+        }
+      }
+
+      updateStats();
+    }
+
+    async function loadDailyHistoryViaTree(owner, repo, branch) {
+      try {
+        const treeData = await ghFetch(`/repos/${owner}/${repo}/git/trees/${branch}?recursive=1`);
+        if (treeData && Array.isArray(treeData.tree)) {
+          treeData.tree.forEach(item => {
+            if (item.type === 'blob' && /^Daily\/\d{4}-\d{2}-\d{2}\.md$/.test(item.path)) {
+              const name = item.path.replace('Daily/', '').replace('.md', '');
+              loggedDates.add(name);
+            }
+          });
+        }
+      } catch (err) {
+        console.error("Git Trees fallback failed:", err);
+      }
+    }
+
+    /**
+     * Fetches all skill directories in Skills/
+     */
+    async function loadVaultSkills() {
+      const config = getSettings();
+      if (!config.token || !config.username || !config.repo) return;
+
+      const owner = encodeURIComponent(config.username.trim());
+      const repo = encodeURIComponent(config.repo.trim());
+      const branch = encodeURIComponent((config.branch || 'main').trim());
+
+      try {
+        const contents = await ghFetch(`/repos/${owner}/${repo}/contents/${SKILLS_DIR}?ref=${branch}`);
+        if (Array.isArray(contents)) {
+          knownSkills = contents
+            .filter(item => item.type === 'dir')
+            .map(item => item.name);
+          knownSkills.sort((a, b) => a.localeCompare(b));
+        }
+      } catch (err) {
+        if (err.status === 404) {
+          knownSkills = [];
+        } else {
+          console.error("Failed to load skills:", err);
+        }
+      }
+
+      renderSkillDatalist();
+      renderSkillChips();
+    }
+
+    /* =====================================================
+       PART 7: SKILLS MANAGEMENT & CHIPS UI
+       ===================================================== */
+
+    function renderSkillDatalist() {
+      const dl = document.getElementById('skills-datalist');
+      dl.innerHTML = '';
+      knownSkills.forEach(skill => {
+        const opt = document.createElement('option');
+        opt.value = skill;
+        dl.appendChild(opt);
+      });
+    }
+
+    function renderSkillChips() {
+      const container = document.getElementById('skills-chips');
+      container.innerHTML = '';
+
+      // Combine known skills with any selected skills
+      const allSkills = Array.from(new Set([...knownSkills, ...selectedSkills]));
+      allSkills.sort((a, b) => a.localeCompare(b));
+
+      if (allSkills.length === 0) {
+        const emptyMsg = document.createElement('span');
+        emptyMsg.style.fontSize = '12px';
+        emptyMsg.style.color = '#7C705D';
+        emptyMsg.style.fontStyle = 'italic';
+        emptyMsg.textContent = 'No skills recorded yet. Add one above!';
+        container.appendChild(emptyMsg);
+        return;
+      }
+
+      allSkills.forEach(skill => {
+        const isSelected = selectedSkills.includes(skill);
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = `skill-chip ${isSelected ? 'selected' : 'unselected'}`;
+        chip.textContent = skill;
+        chip.onclick = () => toggleSkill(skill);
+        container.appendChild(chip);
+      });
+    }
+
+    function toggleSkill(skill) {
+      if (selectedSkills.includes(skill)) {
+        selectedSkills = selectedSkills.filter(s => s !== skill);
+      } else {
+        selectedSkills.push(skill);
+      }
+      renderSkillChips();
+    }
+
+    function addSkillFromInput() {
+      const input = document.getElementById('skill-input');
+      let val = input.value;
+      if (!val) return;
+
+      // Strip invalid filename characters and collapse whitespace
+      val = val.replace(/[\\/:*?"<>|]/g, '').replace(/\s+/g, ' ').trim();
+      if (!val) return;
+
+      // Case-insensitive match against known skills
+      const existing = knownSkills.find(s => s.toLowerCase() === val.toLowerCase());
+      const canonicalName = existing || val;
+
+      if (!selectedSkills.includes(canonicalName)) {
+        selectedSkills.push(canonicalName);
+      }
+
+      if (!existing && !knownSkills.includes(canonicalName)) {
+        newSkills.add(canonicalName);
+      }
+
+      input.value = '';
+      renderSkillChips();
+    }
+
+    /* =====================================================
+       PART 8: UTF-8 & BASE64 ENCODING HELPERS
+       ===================================================== */
+
+    /**
+     * Converts UTF-8 string to Base64 cleanly using TextEncoder.
+     */
+    function b64EncodeUnicode(str) {
+      const bytes = new TextEncoder().encode(str);
+      let binary = '';
+      const len = bytes.byteLength;
+      for (let i = 0; i < len; i++) {
+        binary += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary);
+    }
+
+    /**
+     * Decodes Base64 to UTF-8 cleanly using TextDecoder.
+     */
+    function b64DecodeUnicode(b64) {
+      const cleanB64 = b64.replace(/\s+/g, '');
+      const binary = atob(cleanB64);
+      const len = binary.length;
+      const bytes = new Uint8Array(len);
+      for (let i = 0; i < len; i++) {
+        bytes[i] = binary.charCodeAt(i);
+      }
+      return new TextDecoder('utf-8').decode(bytes);
+    }
+
+    /* =====================================================
+       PART 9: NOTE TEMPLATE GENERATOR & PARSER
+       ===================================================== */
+
+    /**
+     * Builds the exact Markdown content for Daily/YYYY-MM-DD.md
+     */
+    function buildDailyNoteMarkdown(dateStr, endeavors, takeaways, bottlenecks, skillsList) {
+      let fm = `---\ndate: ${dateStr}`;
+      if (skillsList && skillsList.length > 0) {
+        fm += '\nskills:';
+        skillsList.forEach(s => {
+          fm += `\n  - ${s}`;
+        });
+      }
+      fm += '\n---';
+
+      let body = `# ${dateStr}`;
+      if (skillsList && skillsList.length > 0) {
+        const links = skillsList.map(s => `[[${s}]]`).join(' · ');
+        body += `\n\n**Skills:** ${links}`;
+      }
+
+      body += '\n\n## Endeavors\n';
+      if (endeavors && endeavors.trim()) {
+        body += `${endeavors.trim()}\n`;
+      }
+
+      body += '\n## Key Takeaways\n';
+      if (takeaways && takeaways.trim()) {
+        const lines = takeaways
+          .split(/\r?\n/)
+          .map(l => l.replace(/^\s*[-*]\s+/, '').trim())
+          .filter(l => l.length > 0);
+        if (lines.length > 0) {
+          body += lines.map(l => `- ${l}`).join('\n') + '\n';
+        }
+      }
+
+      body += '\n## Bottlenecks\n';
+      if (bottlenecks && bottlenecks.trim()) {
+        body += `${bottlenecks.trim()}\n`;
+      }
+
+      return `${fm}\n\n${body}`;
+    }
+
+    /**
+     * Parses loaded markdown back into form fields.
+     */
+    function parseDailyNoteMarkdown(md) {
+      let endeavors = '';
+      let takeaways = '';
+      let bottlenecks = '';
+      const parsedSkills = [];
+
+      // Extract frontmatter
+      const fmMatch = md.match(/^---\r?\n([\s\S]*?)\r?\n---/);
+      let body = md;
+      if (fmMatch) {
+        const fmLines = fmMatch[1].split(/\r?\n/);
+        body = md.slice(fmMatch[0].length);
+
+        let inSkillsSection = false;
+        for (const line of fmLines) {
+          const trimmed = line.trim();
+          if (trimmed.startsWith('skills:')) {
+            inSkillsSection = true;
+          } else if (inSkillsSection) {
+            if (trimmed.startsWith('-')) {
+              parsedSkills.push(trimmed.replace(/^-\s*/, '').trim());
+            } else if (trimmed && !trimmed.startsWith('#')) {
+              inSkillsSection = false;
+            }
+          }
+        }
+      }
+
+      // Fallback: extract skills from body **Skills:** [[...]]
+      if (parsedSkills.length === 0) {
+        const bodySkillsMatch = body.match(/\*\*Skills:\*\*\s*(.+)/i);
+        if (bodySkillsMatch) {
+          const wikiMatches = bodySkillsMatch[1].matchAll(/\[\[(.*?)\]\]/g);
+          for (const m of wikiMatches) {
+            if (m[1].trim()) parsedSkills.push(m[1].trim());
+          }
+        }
+      }
+
+      // Sections
+      const endMatch = body.match(/##\s*Endeavors\s*\r?\n([\s\S]*?)(?=\r?\n##\s*Key Takeaways|$)/i);
+      if (endMatch) endeavors = endMatch[1].trim();
+
+      const takeMatch = body.match(/##\s*Key Takeaways\s*\r?\n([\s\S]*?)(?=\r?\n##\s*Bottlenecks|$)/i);
+      if (takeMatch) {
+        const raw = takeMatch[1].trim();
+        const lines = raw
+          .split(/\r?\n/)
+          .map(l => l.replace(/^\s*[-*]\s+/, '').trim())
+          .filter(l => l.length > 0);
+        takeaways = lines.join('\n');
+      }
+
+      const botMatch = body.match(/##\s*Bottlenecks\s*\r?\n([\s\S]*?)(?=$)/i);
+      if (botMatch) bottlenecks = botMatch[1].trim();
+
+      return { endeavors, takeaways, bottlenecks, skills: parsedSkills };
+    }
+
+    /**
+     * Updates or creates a Skill note log.
+     */
+    function updateSkillLog(existingMd, skillName, dateStr, shouldInclude) {
+      const logMatch = existingMd.match(/(##\s*Log\s*\r?\n)([\s\S]*?)(?=\r?\n##\s*|$)/i);
+      let prefix = '';
+      let logSection = '';
+      let suffix = '';
+
+      if (logMatch) {
+        prefix = existingMd.slice(0, logMatch.index) + logMatch[1];
+        logSection = logMatch[2];
+        suffix = existingMd.slice(logMatch.index + logMatch[0].length);
+      } else {
+        prefix = existingMd.trim() + '\n\n## Log\n';
+        logSection = '';
+        suffix = '';
+      }
+
+      const dateSet = new Set();
+      const dateMatches = logSection.matchAll(/-\s*\[\[(\d{4}-\d{2}-\d{2})\]\]/g);
+      for (const m of dateMatches) {
+        dateSet.add(m[1]);
+      }
+
+      if (shouldInclude) {
+        dateSet.add(dateStr);
+      } else {
+        dateSet.delete(dateStr);
+      }
+
+      const sorted = Array.from(dateSet).sort((a, b) => a.localeCompare(b));
+      const logLines = sorted.map(d => `- [[${d}]]`).join('\n');
+
+      return prefix + logLines + (logLines ? '\n' : '') + suffix;
+    }
+
+    function createNewSkillNote(skillName, dateStr) {
+      return `---
+skill: ${skillName}
+---
+# ${skillName}
+
+## Log
+- [[${dateStr}]]
+`;
+    }
+
+    /* =====================================================
+       PART 10: FORM SNAPSHOT & DIRTY CHECK
+       ===================================================== */
+
+    function getFormSnapshot() {
+      return JSON.stringify({
+        endeavors: document.getElementById('note-endeavors').value.trim(),
+        takeaways: document.getElementById('note-takeaways').value.trim(),
+        bottlenecks: document.getElementById('note-bottlenecks').value.trim(),
+        skills: [...selectedSkills].sort()
+      });
+    }
+
+    function isFormDirty() {
+      return getFormSnapshot() !== formSnapshot;
+    }
+
+    function markFormClean() {
+      formSnapshot = getFormSnapshot();
+    }
+
+    function clearForm() {
+      document.getElementById('note-endeavors').value = '';
+      document.getElementById('note-takeaways').value = '';
+      document.getElementById('note-bottlenecks').value = '';
+      selectedSkills = [];
+      initialSkillsForDate = [];
+      renderSkillChips();
+      markFormClean();
+    }
+
+    /* =====================================================
+       PART 11: DATE SWITCHING & LOADING NOTE
+       ===================================================== */
+
+    async function loadDateNote(dateStr) {
+      const config = getSettings();
+      selectedDate = dateStr;
+      document.getElementById('date-input').value = dateStr;
+
+      // Disable next day button when selected date is today
+      const todayStr = formatLocalDate(getTodayLocal());
+      const btnNext = document.getElementById('btn-next-day');
+      btnNext.disabled = (selectedDate >= todayStr);
+
+      if (!isConnected || !loggedDates.has(dateStr)) {
+        clearForm();
+        return;
+      }
+
+      const owner = encodeURIComponent(config.username.trim());
+      const repo = encodeURIComponent(config.repo.trim());
+      const branch = encodeURIComponent((config.branch || 'main').trim());
+
+      try {
+        const fileData = await ghFetch(`/repos/${owner}/${repo}/contents/${DAILY_DIR}/${dateStr}.md?ref=${branch}`);
+        const md = b64DecodeUnicode(fileData.content);
+        const parsed = parseDailyNoteMarkdown(md);
+
+        document.getElementById('note-endeavors').value = parsed.endeavors;
+        document.getElementById('note-takeaways').value = parsed.takeaways;
+        document.getElementById('note-bottlenecks').value = parsed.bottlenecks;
+
+        selectedSkills = [...parsed.skills];
+        initialSkillsForDate = [...parsed.skills];
+
+        // Ensure newly discovered skills appear in knownSkills
+        parsed.skills.forEach(s => {
+          if (!knownSkills.includes(s)) knownSkills.push(s);
+        });
+        knownSkills.sort((a, b) => a.localeCompare(b));
+
+        renderSkillDatalist();
+        renderSkillChips();
+        markFormClean();
+      } catch (err) {
+        console.error("Failed to load daily note:", err);
+        clearForm();
+      }
+    }
+
+    async function switchDate(newDateStr) {
+      const todayStr = formatLocalDate(getTodayLocal());
+      if (newDateStr > todayStr) {
+        showToast("Future dates are not allowed in the ninja path.", true);
+        document.getElementById('date-input').value = selectedDate;
+        return;
+      }
+
+      if (isFormDirty()) {
+        const proceed = confirm("You have unsaved changes. Discard them?");
+        if (!proceed) {
+          document.getElementById('date-input').value = selectedDate;
+          return;
+        }
+      }
+
+      await loadDateNote(newDateStr);
+    }
+
+    /* =====================================================
+       PART 12: SINGLE-COMMIT GIT DATA API SAVE PIPELINE
+       ===================================================== */
+
+    async function pushEpisode() {
+      if (!isConnected) {
+        showToast("Please connect to GitHub in GitHub Setup first!", true);
+        openPopover();
+        return;
+      }
+
+      const endeavors = document.getElementById('note-endeavors').value;
+      const takeaways = document.getElementById('note-takeaways').value;
+      const bottlenecks = document.getElementById('note-bottlenecks').value;
+
+      // Refuse to save a completely empty note
+      if (!endeavors.trim() && !takeaways.trim() && !bottlenecks.trim() && selectedSkills.length === 0) {
+        showToast("Cannot save an empty note. Record your training arc first!", true);
+        return;
+      }
+
+      const btnPush = document.getElementById('btn-push-episode');
+      const originalText = btnPush.textContent;
+      btnPush.disabled = true;
+      btnPush.textContent = "Pushing...";
+
+      const config = getSettings();
+      const owner = encodeURIComponent(config.username.trim());
+      const repo = encodeURIComponent(config.repo.trim());
+      const branch = (config.branch || 'main').trim();
+      const branchEnc = encodeURIComponent(branch);
+
+      try {
+        // Retry loop up to 3 attempts in case branch moves
+        let success = false;
+        let lastError = null;
+
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            // Step 1: GET ref/heads/{branch} to get latest commit SHA, then commit tree SHA
+            const refData = await ghFetch(`/repos/${owner}/${repo}/git/ref/heads/${branchEnc}`);
+            const latestCommitSha = refData.object.sha;
+
+            const commitData = await ghFetch(`/repos/${owner}/${repo}/git/commits/${latestCommitSha}`);
+            const baseTreeSha = commitData.tree.sha;
+
+            // Step 2: Build file list
+            const dailyMd = buildDailyNoteMarkdown(selectedDate, endeavors, takeaways, bottlenecks, selectedSkills);
+            const filesToCommit = [
+              { path: `${DAILY_DIR}/${selectedDate}.md`, content: dailyMd }
+            ];
+
+            // For each selected skill: fetch fresh content or create new
+            for (const skill of selectedSkills) {
+              const skillPath = `${SKILLS_DIR}/${skill}/${skill}.md`;
+              const skillEnc = encodeURIComponent(skillPath);
+              let skillContent = '';
+
+              try {
+                const existingFile = await ghFetch(`/repos/${owner}/${repo}/contents/${skillEnc}?ref=${branchEnc}`);
+                const currentMd = b64DecodeUnicode(existingFile.content);
+                skillContent = updateSkillLog(currentMd, skill, selectedDate, true);
+                if (skillContent !== currentMd) {
+                  filesToCommit.push({ path: skillPath, content: skillContent });
+                }
+              } catch (skillErr) {
+                // If 404, create new skill note
+                skillContent = createNewSkillNote(skill, selectedDate);
+                filesToCommit.push({ path: skillPath, content: skillContent });
+              }
+            }
+
+            // For deselected skills: prune this date's line if it existed
+            const deselected = initialSkillsForDate.filter(s => !selectedSkills.includes(s));
+            for (const skill of deselected) {
+              const skillPath = `${SKILLS_DIR}/${skill}/${skill}.md`;
+              const skillEnc = encodeURIComponent(skillPath);
+
+              try {
+                const existingFile = await ghFetch(`/repos/${owner}/${repo}/contents/${skillEnc}?ref=${branchEnc}`);
+                const currentMd = b64DecodeUnicode(existingFile.content);
+                const updatedMd = updateSkillLog(currentMd, skill, selectedDate, false);
+                if (updatedMd !== currentMd) {
+                  filesToCommit.push({ path: skillPath, content: updatedMd });
+                }
+              } catch (_) {
+                // Ignore if not found
+              }
+            }
+
+            // Step 3: POST blobs for each file
+            const treeEntries = [];
+            for (const file of filesToCommit) {
+              const blobRes = await ghFetch(`/repos/${owner}/${repo}/git/blobs`, {
+                method: 'POST',
+                body: JSON.stringify({
+                  content: b64EncodeUnicode(file.content),
+                  encoding: 'base64'
+                })
+              });
+              treeEntries.push({
+                path: file.path,
+                mode: '100644',
+                type: 'blob',
+                sha: blobRes.sha
+              });
+            }
+
+            // Step 4: POST tree with base_tree
+            const treeRes = await ghFetch(`/repos/${owner}/${repo}/git/trees`, {
+              method: 'POST',
+              body: JSON.stringify({
+                base_tree: baseTreeSha,
+                tree: treeEntries
+              })
+            });
+            const newTreeSha = treeRes.sha;
+
+            // Step 5: POST commit
+            const newCommitRes = await ghFetch(`/repos/${owner}/${repo}/git/commits`, {
+              method: 'POST',
+              body: JSON.stringify({
+                message: `log: ${selectedDate}`,
+                tree: newTreeSha,
+                parents: [latestCommitSha]
+              })
+            });
+            const newCommitSha = newCommitRes.sha;
+
+            // Step 6: PATCH ref (force: false)
+            await ghFetch(`/repos/${owner}/${repo}/git/refs/heads/${branchEnc}`, {
+              method: 'PATCH',
+              body: JSON.stringify({
+                sha: newCommitSha,
+                force: false
+              })
+            });
+
+            success = true;
+            break;
+          } catch (retryErr) {
+            lastError = retryErr;
+            if ((retryErr.status === 422 || retryErr.status === 409) && attempt < 3) {
+              // Branch moved, wait briefly and retry
+              await new Promise(r => setTimeout(r, 400 * attempt));
+              continue;
+            }
+            throw retryErr;
+          }
+        }
+
+        if (success) {
+          showToast("Episode saved");
+          loggedDates.add(selectedDate);
+
+          // Mark new skills as known
+          selectedSkills.forEach(s => {
+            if (!knownSkills.includes(s)) knownSkills.push(s);
+          });
+          newSkills.clear();
+          knownSkills.sort((a, b) => a.localeCompare(b));
+          initialSkillsForDate = [...selectedSkills];
+
+          renderSkillDatalist();
+          renderSkillChips();
+          updateStats();
+          markFormClean();
+        } else if (lastError) {
+          throw lastError;
+        }
+      } catch (err) {
+        console.error("Save failed:", err);
+        showToast(err.message || "Failed to push episode", true);
+      } finally {
+        btnPush.disabled = false;
+        btnPush.textContent = originalText;
+      }
+    }
+
+    /* =====================================================
+       PART 13: UI MODALS, POPOVER & TOASTS
+       ===================================================== */
+
+    function showToast(msg, isError = false) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${isError ? 'toast-error' : ''}`;
+      toast.textContent = msg;
+      container.appendChild(toast);
+
+      setTimeout(() => {
+        toast.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(10px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3200);
+    }
+
+    function openPopover() {
+      const popover = document.getElementById('github-popover');
+      const backdrop = document.getElementById('popover-backdrop');
+      popover.classList.add('active');
+      backdrop.classList.add('active');
+    }
+
+    function closePopover() {
+      const popover = document.getElementById('github-popover');
+      const backdrop = document.getElementById('popover-backdrop');
+      popover.classList.remove('active');
+      backdrop.classList.remove('active');
+    }
+
+    function togglePopover() {
+      const popover = document.getElementById('github-popover');
+      if (popover.classList.contains('active')) {
+        closePopover();
+      } else {
+        openPopover();
+      }
+    }
+
+    function openPreviewModal() {
+      const endeavors = document.getElementById('note-endeavors').value;
+      const takeaways = document.getElementById('note-takeaways').value;
+      const bottlenecks = document.getElementById('note-bottlenecks').value;
+
+      const md = buildDailyNoteMarkdown(selectedDate, endeavors, takeaways, bottlenecks, selectedSkills);
+
+      document.getElementById('modal-preview-filepath').textContent = `Daily/${selectedDate}.md`;
+      document.getElementById('modal-preview-content').textContent = md;
+      document.getElementById('preview-modal-backdrop').classList.add('active');
+    }
+
+    function closePreviewModal() {
+      document.getElementById('preview-modal-backdrop').classList.remove('active');
+    }
+
+    /* =====================================================
+       PART 14: EVENT LISTENERS & INITIALIZATION
+       ===================================================== */
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. Initialize local date to today
+      const today = getTodayLocal();
+      selectedDate = formatLocalDate(today);
+
+      const dateInput = document.getElementById('date-input');
+      dateInput.value = selectedDate;
+      dateInput.max = selectedDate; // No future dates
+
+      // 2. Load stored credentials into setup fields
+      const settings = getSettings();
+      if (settings.username) document.getElementById('gh-username').value = settings.username;
+      if (settings.repo) document.getElementById('gh-repo').value = settings.repo;
+      if (settings.branch) document.getElementById('gh-branch').value = settings.branch;
+      if (settings.token) document.getElementById('gh-token').value = settings.token;
+
+      // 3. Setup event listeners
+      document.getElementById('header-status-btn').onclick = togglePopover;
+      document.getElementById('popover-close-btn').onclick = closePopover;
+      document.getElementById('popover-backdrop').onclick = closePopover;
+
+      // Popover actions
+      document.getElementById('btn-test-connection').onclick = async () => {
+        // Test with current values in inputs without touching localStorage
+        const username = document.getElementById('gh-username').value.trim();
+        const repo = document.getElementById('gh-repo').value.trim();
+        const branch = document.getElementById('gh-branch').value.trim() || 'main';
+        const token = document.getElementById('gh-token').value.trim();
+
+        await verifyConnection(true, { username, repo, branch, token });
+      };
+
+      document.getElementById('btn-save-settings').onclick = async () => {
+        const username = document.getElementById('gh-username').value.trim();
+        const repo = document.getElementById('gh-repo').value.trim();
+        const branch = document.getElementById('gh-branch').value.trim() || 'main';
+        const token = document.getElementById('gh-token').value.trim();
+
+        saveSettings({ username, repo, branch, token });
+        showToast("Settings saved");
+        const ok = await verifyConnection(false);
+
+        if (ok) {
+          await loadDailyHistory();
+          await loadVaultSkills();
+          await loadDateNote(selectedDate);
+          closePopover();
+        }
+      };
+
+      document.getElementById('btn-disconnect').onclick = () => {
+        clearSettings();
+        document.getElementById('gh-username').value = '';
+        document.getElementById('gh-repo').value = '';
+        document.getElementById('gh-branch').value = 'main';
+        document.getElementById('gh-token').value = '';
+        updateConnectionStatus('not-connected');
+        loggedDates = new Set();
+        knownSkills = [];
+        selectedSkills = [];
+        renderSkillDatalist();
+        renderSkillChips();
+        updateStats();
+        clearForm();
+        showToast("Disconnected");
+      };
+
+      // Date navigation buttons
+      document.getElementById('date-input').onchange = (e) => {
+        switchDate(e.target.value);
+      };
+
+      document.getElementById('btn-prev-day').onclick = () => {
+        const curr = parseLocalDate(selectedDate);
+        const prev = addDays(curr, -1);
+        switchDate(formatLocalDate(prev));
+      };
+
+      document.getElementById('btn-today').onclick = () => {
+        const todayStr = formatLocalDate(getTodayLocal());
+        switchDate(todayStr);
+      };
+
+      document.getElementById('btn-next-day').onclick = () => {
+        const curr = parseLocalDate(selectedDate);
+        const next = addDays(curr, 1);
+        switchDate(formatLocalDate(next));
+      };
+
+      // Skill input & enter key
+      document.getElementById('btn-add-skill').onclick = addSkillFromInput;
+      document.getElementById('skill-input').onkeydown = (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          addSkillFromInput();
+        }
+      };
+
+      // Main push button
+      document.getElementById('btn-push-episode').onclick = pushEpisode;
+
+      // Preview modal
+      document.getElementById('btn-preview-episode').onclick = openPreviewModal;
+      document.getElementById('modal-preview-close').onclick = closePreviewModal;
+      document.getElementById('modal-close-btn').onclick = closePreviewModal;
+      document.getElementById('preview-modal-backdrop').onclick = (e) => {
+        if (e.target.id === 'preview-modal-backdrop') closePreviewModal();
+      };
+
+      document.getElementById('modal-copy-btn').onclick = () => {
+        const text = document.getElementById('modal-preview-content').textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          showToast("Markdown copied to clipboard");
+        }).catch(() => {
+          showToast("Failed to copy", true);
+        });
+      };
+
+      // Close modal on Escape
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closePreviewModal();
+          closePopover();
+        }
+      });
+
+      // 4. Initial connection check on page load
+      updateStats();
+      markFormClean();
+
+      const connected = await verifyConnection(false);
+      if (connected) {
+        await loadDailyHistory();
+        await loadVaultSkills();
+        await loadDateNote(selectedDate);
+      }
+    });
+  </script>
+</body>
+</html>
